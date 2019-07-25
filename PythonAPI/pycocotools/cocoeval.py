@@ -143,6 +143,8 @@ class COCOeval:
 
         if p.iouType == 'segm' or p.iouType == 'bbox':
             computeIoU = self.computeIoU
+        elif p.iouType == 'bbox_custom_bins':
+            computeIoU = self.computeIoU
         elif p.iouType == 'keypoints':
             computeIoU = self.computeOks
         self.ious = {(imgId, catId): computeIoU(imgId, catId) \
@@ -179,6 +181,9 @@ class COCOeval:
             g = [g['segmentation'] for g in gt]
             d = [d['segmentation'] for d in dt]
         elif p.iouType == 'bbox':
+            g = [g['bbox'] for g in gt]
+            d = [d['bbox'] for d in dt]
+        elif p.iouType == 'bbox_custom_bins':
             g = [g['bbox'] for g in gt]
             d = [d['bbox'] for d in dt]
         else:
@@ -483,11 +488,115 @@ class COCOeval:
             stats[8] = _summarize(0, maxDets=20, areaRng='medium')
             stats[9] = _summarize(0, maxDets=20, areaRng='large')
             return stats
+
+        def _summarizeDets_custom():
+            stats = np.zeros((96,))
+            stats[0] = _summarize(1)
+            stats[1] = _summarize(1, iouThr=.5, maxDets=self.params.maxDets[2])
+            stats[2] = _summarize(1, iouThr=.75, maxDets=self.params.maxDets[2])
+            stats[3] = _summarize(0, maxDets=self.params.maxDets[0])
+            stats[4] = _summarize(0, maxDets=self.params.maxDets[1])
+            stats[5] = _summarize(0, maxDets=self.params.maxDets[2])
+            stats[6] = _summarize(0, maxDets=self.params.maxDets[0])
+            stats[7] = _summarize(0, maxDets=self.params.maxDets[1])
+            stats[8] = _summarize(0, maxDets=self.params.maxDets[2])
+            stats[9] = _summarize(0, areaRng= 'bin_[0, 100]', maxDets=self.params.maxDets[2])
+            stats[10] = _summarize(0, areaRng= 'bin_[100, 400]', maxDets=self.params.maxDets[2])
+            stats[11] = _summarize(0, areaRng= 'bin_[400, 900]', maxDets=self.params.maxDets[2])
+            stats[12] = _summarize(0, areaRng= 'bin_[900, 1600]', maxDets=self.params.maxDets[2])
+            stats[13] = _summarize(0, areaRng= 'bin_[1600, 2500]', maxDets=self.params.maxDets[2])
+            stats[14] = _summarize(0, areaRng= 'bin_[2500, 3600]', maxDets=self.params.maxDets[2])
+            stats[15] = _summarize(0, areaRng= 'bin_[3600, 4900]', maxDets=self.params.maxDets[2])
+            stats[16] = _summarize(0, areaRng= 'bin_[4900, 6400]', maxDets=self.params.maxDets[2])
+            stats[17] = _summarize(0, areaRng= 'bin_[6400, 8100]', maxDets=self.params.maxDets[2])
+            stats[18] = _summarize(0, areaRng= 'bin_[8100, 10000]', maxDets=self.params.maxDets[2])
+            stats[19] = _summarize(0, areaRng= 'bin_[10000, 12100]', maxDets=self.params.maxDets[2])
+            stats[20] = _summarize(0, areaRng= 'bin_[12100, 14400]', maxDets=self.params.maxDets[2])
+            stats[21] = _summarize(0, areaRng= 'bin_[14400, 16900]', maxDets=self.params.maxDets[2])
+            stats[22] = _summarize(0, areaRng= 'bin_[16900, 19600]', maxDets=self.params.maxDets[2])
+            stats[23] = _summarize(0, areaRng= 'bin_[19600, 22500]', maxDets=self.params.maxDets[2])
+            stats[24] = _summarize(0, areaRng= 'bin_[22500, 25600]', maxDets=self.params.maxDets[2])
+            stats[25] = _summarize(0, areaRng= 'bin_[25600, 28900]', maxDets=self.params.maxDets[2])
+            stats[26] = _summarize(0, areaRng= 'bin_[28900, 32400]', maxDets=self.params.maxDets[2])
+            stats[27] = _summarize(0, areaRng= 'bin_[32400, 36100]', maxDets=self.params.maxDets[2])
+            stats[28] = _summarize(0, areaRng= 'bin_[36100, 40000]', maxDets=self.params.maxDets[2])
+            stats[29] = _summarize(0, areaRng= 'bin_[40000, 44100]', maxDets=self.params.maxDets[2])
+            stats[30] = _summarize(0, areaRng= 'bin_[44100, 48400]', maxDets=self.params.maxDets[2])
+            stats[31] = _summarize(0, areaRng= 'bin_[48400, 52900]', maxDets=self.params.maxDets[2])
+            stats[32] = _summarize(0, areaRng= 'bin_[52900, 57600]', maxDets=self.params.maxDets[2])
+            stats[33] = _summarize(0, areaRng= 'bin_[57600, 62500]', maxDets=self.params.maxDets[2])
+            stats[34] = _summarize(0, areaRng= 'bin_[62500, 67600]', maxDets=self.params.maxDets[2])
+            stats[35] = _summarize(0, areaRng= 'bin_[67600, 72900]', maxDets=self.params.maxDets[2])
+            stats[36] = _summarize(0, areaRng= 'bin_[72900, 78400]', maxDets=self.params.maxDets[2])
+            stats[37] = _summarize(0, areaRng= 'bin_[78400, 84100]', maxDets=self.params.maxDets[2])
+            stats[38] = _summarize(0, areaRng= 'bin_[84100, 90000]', maxDets=self.params.maxDets[2])
+            stats[39] = _summarize(0, areaRng= 'bin_[90000, 96100]', maxDets=self.params.maxDets[2])
+            stats[40] = _summarize(0, areaRng= 'bin_[96100, 102400]', maxDets=self.params.maxDets[2])
+            stats[41] = _summarize(0, areaRng= 'bin_[102400, 108900]', maxDets=self.params.maxDets[2])
+            stats[42] = _summarize(0, areaRng= 'bin_[108900, 115600]', maxDets=self.params.maxDets[2])
+            stats[43] = _summarize(0, areaRng= 'bin_[115600, 122500]', maxDets=self.params.maxDets[2])
+            stats[44] = _summarize(0, areaRng= 'bin_[122500, 129600]', maxDets=self.params.maxDets[2])
+            stats[45] = _summarize(0, areaRng= 'bin_[129600, 136900]', maxDets=self.params.maxDets[2])
+            stats[46] = _summarize(0, areaRng= 'bin_[136900, 144400]', maxDets=self.params.maxDets[2])
+            stats[47] = _summarize(0, areaRng= 'bin_[144400, 152100]', maxDets=self.params.maxDets[2])
+            stats[48] = _summarize(0, areaRng= 'bin_[152100, 160000]', maxDets=self.params.maxDets[2])
+            stats[49] = _summarize(0, areaRng= 'bin_[160000, 168100]', maxDets=self.params.maxDets[2])
+            stats[50] = _summarize(0, areaRng= 'bin_[168100, 176400]', maxDets=self.params.maxDets[2])
+            stats[51] = _summarize(0, areaRng= 'bin_[176400, 184900]', maxDets=self.params.maxDets[2])
+            stats[52] = _summarize(0, areaRng= 'bin_[184900, 193600]', maxDets=self.params.maxDets[2])
+            stats[53] = _summarize(0, areaRng= 'bin_[193600, 202500]', maxDets=self.params.maxDets[2])
+            stats[54] = _summarize(0, areaRng= 'bin_[202500, 211600]', maxDets=self.params.maxDets[2])
+            stats[55] = _summarize(0, areaRng= 'bin_[211600, 220900]', maxDets=self.params.maxDets[2])
+            stats[56] = _summarize(0, areaRng= 'bin_[220900, 230400]', maxDets=self.params.maxDets[2])
+            stats[57] = _summarize(0, areaRng= 'bin_[230400, 240100]', maxDets=self.params.maxDets[2])
+            stats[58] = _summarize(0, areaRng= 'bin_[240100, 250000]', maxDets=self.params.maxDets[2])
+            stats[59] = _summarize(0, areaRng= 'bin_[250000, 260100]', maxDets=self.params.maxDets[2])
+            stats[60] = _summarize(0, areaRng= 'bin_[260100, 270400]', maxDets=self.params.maxDets[2])
+            stats[61] = _summarize(0, areaRng= 'bin_[270400, 280900]', maxDets=self.params.maxDets[2])
+            stats[62] = _summarize(0, areaRng= 'bin_[280900, 291600]', maxDets=self.params.maxDets[2])
+            stats[63] = _summarize(0, areaRng= 'bin_[291600, 302500]', maxDets=self.params.maxDets[2])
+            stats[64] = _summarize(0, areaRng= 'bin_[302500, 313600]', maxDets=self.params.maxDets[2])
+            stats[65] = _summarize(0, areaRng= 'bin_[313600, 324900]', maxDets=self.params.maxDets[2])
+            stats[66] = _summarize(0, areaRng= 'bin_[324900, 336400]', maxDets=self.params.maxDets[2])
+            stats[67] = _summarize(0, areaRng= 'bin_[336400, 348100]', maxDets=self.params.maxDets[2])
+            stats[68] = _summarize(0, areaRng= 'bin_[348100, 360000]', maxDets=self.params.maxDets[2])
+            stats[69] = _summarize(0, areaRng= 'bin_[360000, 372100]', maxDets=self.params.maxDets[2])
+            stats[70] = _summarize(0, areaRng= 'bin_[372100, 384400]', maxDets=self.params.maxDets[2])
+            stats[71] = _summarize(0, areaRng= 'bin_[384400, 396900]', maxDets=self.params.maxDets[2])
+            stats[72] = _summarize(0, areaRng= 'bin_[396900, 409600]', maxDets=self.params.maxDets[2])
+            stats[73] = _summarize(0, areaRng= 'bin_[409600, 422500]', maxDets=self.params.maxDets[2])
+            stats[74] = _summarize(0, areaRng= 'bin_[422500, 435600]', maxDets=self.params.maxDets[2])
+            stats[75] = _summarize(0, areaRng= 'bin_[435600, 448900]', maxDets=self.params.maxDets[2])
+            stats[76] = _summarize(0, areaRng= 'bin_[448900, 462400]', maxDets=self.params.maxDets[2])
+            stats[77] = _summarize(0, areaRng= 'bin_[462400, 476100]', maxDets=self.params.maxDets[2])
+            stats[78] = _summarize(0, areaRng= 'bin_[476100, 490000]', maxDets=self.params.maxDets[2])
+            stats[79] = _summarize(0, areaRng= 'bin_[490000, 504100]', maxDets=self.params.maxDets[2])
+            stats[80] = _summarize(0, areaRng= 'bin_[504100, 518400]', maxDets=self.params.maxDets[2])
+            stats[81] = _summarize(0, areaRng= 'bin_[518400, 532900]', maxDets=self.params.maxDets[2])
+            stats[82] = _summarize(0, areaRng= 'bin_[532900, 547600]', maxDets=self.params.maxDets[2])
+            stats[83] = _summarize(0, areaRng= 'bin_[547600, 562500]', maxDets=self.params.maxDets[2])
+            stats[84] = _summarize(0, areaRng= 'bin_[562500, 577600]', maxDets=self.params.maxDets[2])
+            stats[85] = _summarize(0, areaRng= 'bin_[577600, 592900]', maxDets=self.params.maxDets[2])
+            stats[86] = _summarize(0, areaRng= 'bin_[592900, 608400]', maxDets=self.params.maxDets[2])
+            stats[87] = _summarize(0, areaRng= 'bin_[608400, 624100]', maxDets=self.params.maxDets[2])
+            stats[88] = _summarize(0, areaRng= 'bin_[624100, 640000]', maxDets=self.params.maxDets[2])
+            stats[89] = _summarize(0, areaRng= 'bin_[640000, 656100]', maxDets=self.params.maxDets[2])
+            stats[90] = _summarize(0, areaRng= 'bin_[656100, 672400]', maxDets=self.params.maxDets[2])
+            stats[91] = _summarize(0, areaRng= 'bin_[672400, 688900]', maxDets=self.params.maxDets[2])
+            stats[92] = _summarize(0, areaRng= 'bin_[688900, 705600]', maxDets=self.params.maxDets[2])
+            stats[93] = _summarize(0, areaRng= 'bin_[705600, 722500]', maxDets=self.params.maxDets[2])
+            stats[94] = _summarize(0, areaRng= 'bin_[722500, 739600]', maxDets=self.params.maxDets[2])
+            stats[95] = _summarize(0, areaRng= 'bin_[739600, 756900]', maxDets=self.params.maxDets[2])
+
+            return stats
+
         if not self.eval:
             raise Exception('Please run accumulate() first')
         iouType = self.params.iouType
         if iouType == 'segm' or iouType == 'bbox':
             summarize = _summarizeDets
+        elif iouType == 'bbox_custom_bins':
+            summarize = _summarizeDets_custom
         elif iouType == 'keypoints':
             summarize = _summarizeKps
         self.stats = summarize()
@@ -522,9 +631,44 @@ class Params:
         self.useCats = 1
         self.kpt_oks_sigmas = np.array([.26, .25, .25, .35, .35, .79, .79, .72, .72, .62,.62, 1.07, 1.07, .87, .87, .89, .89])/10.0
 
+    def setDetParamsCustomBox(self):
+        self.imgIds = []
+        self.catIds = []
+        # np.arange causes trouble.  the data point on arange is slightly larger than the true value
+        self.iouThrs = np.linspace(.5, 0.95, np.round((0.95 - .5) / .05) + 1, endpoint=True)
+        self.recThrs = np.linspace(.0, 1.00, np.round((1.00 - .0) / .01) + 1, endpoint=True)
+        self.maxDets = [1, 10, 100]
+        self.areaRng = [[0, 100], [100, 400], [400, 900], [900, 1600], [1600, 2500], [2500, 3600], [3600, 4900], [4900, 6400], [6400, 8100],
+                        [8100, 10000], [10000, 12100], [12100, 14400], [14400, 16900], [16900, 19600], [19600, 22500], [22500, 25600], [25600, 28900],
+                        [28900, 32400], [32400, 36100], [36100, 40000], [40000, 44100], [44100, 48400], [48400, 52900], [52900, 57600], [57600, 62500],
+                        [62500, 67600], [67600, 72900], [72900, 78400], [78400, 84100], [84100, 90000], [90000, 96100], [96100, 102400], [102400, 108900],
+                        [108900, 115600], [115600, 122500], [122500, 129600], [129600, 136900], [136900, 144400], [144400, 152100], [152100, 160000],
+                        [160000, 168100], [168100, 176400], [176400, 184900], [184900, 193600], [193600, 202500], [202500, 211600], [211600, 220900],
+                        [220900, 230400], [230400, 240100], [240100, 250000], [250000, 260100], [260100, 270400], [270400, 280900], [280900, 291600],
+                        [291600, 302500], [302500, 313600], [313600, 324900], [324900, 336400], [336400, 348100], [348100, 360000], [360000, 372100],
+                        [372100, 384400], [384400, 396900], [396900, 409600], [409600, 422500], [422500, 435600], [435600, 448900],[448900, 462400],
+                        [462400, 476100], [476100, 490000], [490000, 504100], [504100, 518400], [518400, 532900], [532900, 547600], [547600, 562500],
+                        [562500, 577600], [577600, 592900], [592900, 608400], [608400, 624100], [624100, 640000], [640000, 656100], [656100, 672400],
+                        [672400, 688900], [688900, 705600], [705600, 722500], [722500, 739600], [739600, 756900]]
+        self.areaRngLbl = ["bin_[0, 100]", "bin_[100, 400]", "bin_[400, 900]", "bin_[900, 1600]", "bin_[1600, 2500]", "bin_[2500, 3600]", "bin_[3600, 4900]", "bin_[4900, 6400]", "bin_[6400, 8100]",
+                        "bin_[8100, 10000]", "bin_[10000, 12100]", "bin_[12100, 14400]", "bin_[14400, 16900]", "bin_[16900, 19600]", "bin_[19600, 22500]", "bin_[22500, 25600]", "bin_[25600, 28900]",
+                        "bin_[28900, 32400]", "bin_[32400, 36100]", "bin_[36100, 40000]", "bin_[40000, 44100]", "bin_[44100, 48400]", "bin_[48400, 52900]", "bin_[52900, 57600]", "bin_[57600, 62500]",
+                        "bin_[62500, 67600]", "bin_[67600, 72900]", "bin_[72900, 78400]", "bin_[78400, 84100]", "bin_[84100, 90000]", "bin_[90000, 96100]", "bin_[96100, 102400]", "bin_[102400, 108900]",
+                        "bin_[108900, 115600]", "bin_[115600, 122500]", "bin_[122500, 129600]", "bin_[129600, 136900]", "bin_[136900, 144400]", "bin_[144400, 152100]", "bin_[152100, 160000]",
+                        "bin_[160000, 168100]", "bin_[168100, 176400]", "bin_[176400, 184900]", "bin_[184900, 193600]", "bin_[193600, 202500]", "bin_[202500, 211600]", "bin_[211600, 220900]",
+                        "bin_[220900, 230400]", "bin_[230400, 240100]", "bin_[240100, 250000]", "bin_[250000, 260100]", "bin_[260100, 270400]", "bin_[270400, 280900]", "bin_[280900, 291600]",
+                        "bin_[291600, 302500]", "bin_[302500, 313600]", "bin_[313600, 324900]", "bin_[324900, 336400]", "bin_[336400, 348100]", "bin_[348100, 360000]", "bin_[360000, 372100]",
+                        "bin_[372100, 384400]", "bin_[384400, 396900]", "bin_[396900, 409600]", "bin_[409600, 422500]", "bin_[422500, 435600]", "bin_[435600, 448900]","bin_[448900, 462400]",
+                        "bin_[462400, 476100]", "bin_[476100, 490000]", "bin_[490000, 504100]", "bin_[504100, 518400]", "bin_[518400, 532900]", "bin_[532900, 547600]", "bin_[547600, 562500]",
+                        "bin_[562500, 577600]", "bin_[577600, 592900]", "bin_[592900, 608400]", "bin_[608400, 624100]", "bin_[624100, 640000]", "bin_[640000, 656100]", "bin_[656100, 672400]",
+                        "bin_[672400, 688900]", "bin_[688900, 705600]", "bin_[705600, 722500]", "bin_[722500, 739600]", "bin_[739600, 756900]"]
+        self.useCats = 1
+
     def __init__(self, iouType='segm'):
         if iouType == 'segm' or iouType == 'bbox':
             self.setDetParams()
+        elif iouType == 'bbox_custom_bins':
+            self.setDetParamsCustomBox()
         elif iouType == 'keypoints':
             self.setKpParams()
         else:
